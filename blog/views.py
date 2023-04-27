@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render
 from django.views import View
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 from .models import *
 from .forms import BookForm
 
@@ -74,7 +74,7 @@ class BookDetailView(DetailView):
     context_object_name = 'book'
 
     
-def CreateBookView(request: HttpRequest):
+def createBookView(request: HttpRequest):
     form = BookForm(request.POST)
     if request.method == 'POST':
         form = BookForm(request.POST)
@@ -82,3 +82,9 @@ def CreateBookView(request: HttpRequest):
             form.save()
             return HttpResponse('success')
     return render(request, 'book_form.html', {'form': form})
+
+class BookCreateView(CreateView):
+    model = Book
+    template_name = "Book_create.html"
+    context_object_name = 'book'
+    fields = ['title', 'desc', 'author']
