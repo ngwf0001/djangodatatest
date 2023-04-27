@@ -1,13 +1,39 @@
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView
 from .models import *
-from .forms import BookForm
+from .forms import BookForm, UploadFileForm
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
+def handle_uploaded_file(f):
+    with open("abc.txt", "wb+") as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
 
 # Create your views here.
+# @login_required
 def index(request):
     return HttpResponse('hello world')
+
+def upload_file(request):
+    if request.method == "POST":
+        print(request.POST)
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES["file"])
+            # return HttpResponseRedirect("/success/url/") 
+            return HttpResponse('Successfully uploaded file')
+
+    
+    form = UploadFileForm()
+    return render(request, "upload.html", {"form": form})
+
 
 class Home(View):
     def get(self, request: HttpRequest, *args, **kwargs):
@@ -51,10 +77,11 @@ class BookListView2(ListView):
     
 
 
-class BookListView(ListView):
+class BookListView(LoginRequiredMixin, ListView):
     model = Book
     template_name = 'book_list.html' #default is 'book_list.html'
     context_object_name = 'books' #default is 'objects'
+
     
     def get_queryset(self, *args, **kwargs):
         qs = super().get_queryset(*args, **kwargs) #qs = super(BookListView,self).get_queryset(*args, **kwargs)
@@ -65,9 +92,10 @@ class BookListView(ListView):
     
     def get_context_data(self, **kwargs):
         context = super(BookListView, self).get_context_data(**kwargs)
-        context['love'] = 'I love you'
+        context['love'] = f"I love you {self.request.session['username']}"
         return context
 
+@method_decorator(login_required, name='dispatch')
 class BookDetailView(DetailView):
     model = Book
     template_name = "book_detail.html"
@@ -88,3 +116,15 @@ class BookCreateView(CreateView):
     template_name = "Book_create.html"
     context_object_name = 'book'
     fields = ['title', 'desc', 'author']
+    
+class MyLoginView(LoginView):
+    template_name = "login.html"
+    redirect_authenticated_user = True
+    
+    def get_success_url(self):
+        self.request.session['username'] = self.request.POST['username']
+        return reverse_lazy('booklist')
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Invalid user name or password')
+        return self.render_to_response(self.get_context_data(form=form))
