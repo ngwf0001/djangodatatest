@@ -1,7 +1,14 @@
 <h2>Books</h2>
 <ul>
-    {% for book in object_list  %}
-    <li>{{book.title}}</li>
-        
+   
+
+    {% for book in books  %}
+    
+        <a href=" {% url 'bookdetail' pk=book.pk %}">
+    <li>{{book.title}} by {{book.author.firstname}}</li>
+        </a>
     {% endfor %}
+
+    <br>
+    <h1 style="color:red">{{love}}</h1>
 </ul>
