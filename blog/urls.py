@@ -8,8 +8,10 @@ urlpatterns = [
     path('test', views.Test.as_view(), name='index'),
     path('booklist', views.BookListView.as_view(), name='booklist'),
     path('book/<pk>', views.BookDetailView.as_view(), name='bookdetail'),
+    path('update/<pk>', views.BookUpdateView.as_view(), name='bookupdate'),
     path('createbook', views.BookCreateView.as_view(), name='index'),
     path('login', views.MyLoginView.as_view(), name='login'),
     path('logout', LogoutView.as_view(next_page='login'), name='logout'),
-    path('upload', views.upload_file, name='upload')
+    path('upload', views.upload_file, name='upload'),
+    path('update2/<pk>', views.bookupdate, name='bookupdate2')
 ]

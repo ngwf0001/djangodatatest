@@ -1,9 +1,9 @@
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .models import *
-from .forms import BookForm, UploadFileForm
+from .forms import BookForm, UploadFileForm, BookUpdateForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -128,3 +128,48 @@ class MyLoginView(LoginView):
     def form_invalid(self, form):
         messages.error(self.request, 'Invalid user name or password')
         return self.render_to_response(self.get_context_data(form=form))
+    
+
+class BookUpdateView(UpdateView):
+    # specify the model you want to use
+    model = Book
+    template_name = "book_update.html"
+    context_object_name = 'book'
+    fields = ['title', 'desc', 'author']
+    
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        book = form.save(commit=False)
+        book.title = self.request.POST['title'] + ' --- a good title'
+        book.save()
+        # form.save_m2m()
+        return super().form_valid(form)
+    
+    # can specify success url
+    # url to redirect after successfully
+    # updating details
+    success_url ="/"
+    
+def bookupdate(request, pk):
+    # dictionary for initial data with
+    # field names as keys
+        context ={}
+    
+        # fetch the object related to passed id
+        obj = get_object_or_404(Book, id = pk)
+    
+        # pass the object as instance in form
+        form = BookUpdateForm(request.POST or None, instance = obj)
+    
+        # save the data from the form and
+        # redirect to detail_view
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/"+pk)
+
+    
+        # add form dictionary to context
+        context["form"] = form
+    
+        return render(request, "book_update.html", context)
