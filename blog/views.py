@@ -9,7 +9,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
+from django.utils.decorators import method_decorator 
 
 def handle_uploaded_file(f, filename):
     with open(filename, "wb+") as destination:
