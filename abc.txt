@@ -1,8 +1,0 @@
-Instructions:
-1) Extract
-2) Install application using provided installer and do not reboot
-3) Copy "lservrc"  in to installation directory
-DONE!
- 
-
-You can always thank us here:  www.TheWindowsForum.com /  www.ThumperDC.com

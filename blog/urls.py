@@ -5,8 +5,10 @@ from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('home', views.Home.as_view(), name='home'),
     path('test', views.Test.as_view(), name='index'),
     path('booklist', views.BookListView.as_view(), name='booklist'),
+    path('booklist2', views.BookListView2.as_view(), name='booklist2'),
     path('book/<pk>', views.BookDetailView.as_view(), name='bookdetail'),
     path('update/<pk>', views.BookUpdateView.as_view(), name='bookupdate'),
     path('createbook', views.BookCreateView.as_view(), name='index'),

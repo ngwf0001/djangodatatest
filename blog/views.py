@@ -18,6 +18,9 @@ def handle_uploaded_file(f):
 
 # Create your views here.
 # @login_required
+
+
+@login_required
 def index(request):
     return HttpResponse('hello world')
 
@@ -55,9 +58,9 @@ class Test(View):
         response.write('how are you?<br/>')
         form = BookForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
-            book = form.save(commit=False)
-            title = form.cleaned_data['title']
+            print(form.cleaned_data) 
+            book = form.save(commit=False) 
+            title = form.cleaned_data['title'] 
             description=form.cleaned_data['desc']
             author = form.cleaned_data['author']
             book.title = title + ' --- a good title'
@@ -92,7 +95,8 @@ class BookListView(LoginRequiredMixin, ListView):
     
     def get_context_data(self, **kwargs):
         context = super(BookListView, self).get_context_data(**kwargs)
-        context['love'] = f"I love you {self.request.session['username']}"
+        # context['love'] = f"I love you {self.request.session['username']}"
+        context['love'] = f"I love you "
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -122,7 +126,7 @@ class MyLoginView(LoginView):
     redirect_authenticated_user = True
     
     def get_success_url(self):
-        self.request.session['username'] = self.request.POST['username']
+        # self.request.session['username'] = self.request.POST['username']
         return reverse_lazy('booklist')
     
     def form_invalid(self, form):
@@ -166,7 +170,7 @@ def bookupdate(request, pk):
         # redirect to detail_view
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect("/"+pk)
+            return HttpResponseRedirect("/book/"+pk)
 
     
         # add form dictionary to context
