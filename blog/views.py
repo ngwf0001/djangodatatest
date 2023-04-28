@@ -11,8 +11,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-def handle_uploaded_file(f):
-    with open("abc.txt", "wb+") as destination:
+def handle_uploaded_file(f, filename):
+    with open(filename, "wb+") as destination:
         for chunk in f.chunks():
             destination.write(chunk)
 
@@ -29,7 +29,8 @@ def upload_file(request):
         print(request.POST)
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            handle_uploaded_file(request.FILES["file"])
+            filename = form.cleaned_data['file'].name
+            handle_uploaded_file(request.FILES["file"], filename)
             # return HttpResponseRedirect("/success/url/") 
             return HttpResponse('Successfully uploaded file')
 
