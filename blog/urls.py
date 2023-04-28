@@ -14,4 +14,4 @@ urlpatterns = [
     path('logout', LogoutView.as_view(next_page='login'), name='logout'),
     path('upload', views.upload_file, name='upload'),
     path('update2/<pk>', views.bookupdate, name='bookupdate2'),
-]
+] 
