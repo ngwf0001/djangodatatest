@@ -15,6 +15,22 @@ def handle_uploaded_file(f, filename):
     with open(filename, "wb+") as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+            
+def testfilters(request):
+
+    return render(request, "testfilters.html", context= {'filters': 'testfilters'})
+    
+
+def testsession(request):
+
+    if not request.session.has_key('username2'):
+        request.session['username2']= 'Mary'
+    return HttpResponse(request.session['username2'])
+    
+        
+
+def testsession2(request):
+    return HttpResponse(request.session.get('username2'))
 
 # Create your views here.
 # @login_required
